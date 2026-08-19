@@ -16,7 +16,7 @@ worktree + goal + failing log  →  AGENT_BRIEF.md
 ## Install
 
 ```bash
-npx --yes github:jovial-liu/agentbrief@v1 --help
+npx --yes github:jovial-liu/agentbrief#v1 --help
 ```
 
 ## Quick start
