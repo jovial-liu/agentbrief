@@ -1,0 +1,17 @@
+{
+  "name": "agentbrief",
+  "version": "0.1.0",
+  "description": "Create a safe, portable handoff brief for coding agents from a Git worktree.",
+  "type": "module",
+  "bin": { "agentbrief": "./bin/agentbrief.mjs" },
+  "exports": { ".": "./src/index.mjs" },
+  "scripts": {
+    "test": "node --test",
+    "lint": "node --check bin/agentbrief.mjs && node --check src/index.mjs && node --check src/collect.mjs && node --check src/redact.mjs && node --check src/render.mjs"
+  },
+  "engines": { "node": ">=18" },
+  "keywords": ["ai", "coding-agent", "developer-tools", "git", "handoff", "context", "cli", "local-first"],
+  "license": "MIT",
+  "repository": { "type": "git", "url": "https://github.com/jovial-liu/agentbrief" },
+  "files": ["bin", "src", "test", "LICENSE", "README.md", "CHANGELOG.md", "CODE_OF_CONDUCT.md", "action.yml"]
+}

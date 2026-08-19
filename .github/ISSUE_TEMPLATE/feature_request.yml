@@ -1,0 +1,12 @@
+name: Feature request
+description: Suggest a focused improvement.
+title: "feat: "
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem and proposed workflow
+      description: What handoff is hard today, and what should one command do?
+    validations:
+      required: true

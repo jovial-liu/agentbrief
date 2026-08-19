@@ -1,0 +1,4 @@
+node_modules/
+AGENT_BRIEF.md
+agentbrief.json
+*.log

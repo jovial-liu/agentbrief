@@ -1,0 +1,32 @@
+name: agentbrief
+description: Create a safe Markdown or JSON handoff brief for coding agents.
+inputs:
+  goal:
+    description: The goal for the next agent.
+    required: false
+    default: Continue the current task
+  command:
+    description: Reproduction or verification command to record.
+    required: false
+  log:
+    description: Path to an evidence log. The file is read locally and redacted.
+    required: false
+  format:
+    description: Output format, markdown or json.
+    required: false
+    default: markdown
+  output:
+    description: Output path for the generated brief.
+    required: false
+    default: AGENT_BRIEF.md
+  include-diff:
+    description: Include the current working-tree diff.
+    required: false
+    default: 'true'
+  no-redact:
+    description: Disable local secret redaction. Use only in private CI.
+    required: false
+    default: 'false'
+runs:
+  using: node20
+  main: bin/agentbrief.mjs
