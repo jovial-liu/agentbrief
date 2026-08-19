@@ -11,7 +11,7 @@ Turn a messy Git worktree into a safe, portable handoff for the next coding agen
 worktree + goal + failing log  →  AGENT_BRIEF.md
 ```
 
-`agentbrief` captures the branch, changed files, diff context, reproduction command, and observed evidence. Token-shaped secrets are redacted before the file is written. It does not call an AI API, upload code, or require dependencies.
+`agentbrief` captures the branch, changed files (including new text files), diff context, reproduction command, and observed evidence. Token-shaped secrets are redacted before the file is written. It does not call an AI API, upload code, or require dependencies.
 
 ## Install
 
@@ -44,7 +44,7 @@ agentbrief --max-lines 80 --no-diff
 agentbrief --no-redact # only for a private, trusted workspace
 ```
 
-The default output is `AGENT_BRIEF.md`; use JSON when another tool needs a stable machine-readable envelope. Diffs and logs are capped so one noisy command cannot create an accidental context bomb. The brief contains no absolute local path.
+The default output is `AGENT_BRIEF.md`; use JSON when another tool needs a stable machine-readable envelope. Diffs, new text files, and logs are capped so one noisy command cannot create an accidental context bomb. The brief contains no absolute local path.
 
 ## GitHub Action
 

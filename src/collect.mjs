@@ -1,4 +1,5 @@
 import { execFile } from 'node:child_process';
+import { readFile } from 'node:fs/promises';
 import { promisify } from 'node:util';
 import path from 'node:path';
 import { redactText } from './redact.mjs';
@@ -27,6 +28,26 @@ function statusFiles(status) {
   });
 }
 
+async function untrackedContext(root, files) {
+  const sections = [];
+  for (const file of files.filter((entry) => entry.status === '??')) {
+    const absolute = path.resolve(root, file.path);
+    if (!absolute.startsWith(`${root}${path.sep}`)) continue;
+    try {
+      const buffer = await readFile(absolute);
+      if (buffer.length > 100_000 || buffer.includes(0)) {
+        sections.push(`\n--- untracked: ${file.path} [omitted: binary or over 100 KB]`);
+        continue;
+      }
+      const lines = buffer.toString('utf8').split('\n').map((line) => `+${line}`).join('\n');
+      sections.push(`\n--- untracked: ${file.path}\n${lines}`);
+    } catch {
+      sections.push(`\n--- untracked: ${file.path} [unreadable]`);
+    }
+  }
+  return sections.join('\n');
+}
+
 export async function collectBrief({ root = '.', goal = 'Continue the current task', command = '', log = '', includeDiff = true, maxLines = 160, redact = true } = {}) {
   const absoluteRoot = path.resolve(root);
   const [branch, status, stat, diff] = await Promise.all([
@@ -35,8 +56,10 @@ export async function collectBrief({ root = '.', goal = 'Continue the current ta
     git(absoluteRoot, ['diff', '--stat']),
     includeDiff ? git(absoluteRoot, ['diff', '--no-ext-diff', '--unified=2']) : Promise.resolve('')
   ]);
+  const files = statusFiles(status);
+  const untracked = includeDiff ? await untrackedContext(absoluteRoot, files) : '';
   const fields = [
-    ['goal', goal], ['branch', branch], ['status', status], ['stat', stat], ['diff', diff], ['log', log], ['command', command]
+    ['goal', goal], ['branch', branch], ['status', status], ['stat', stat], ['diff', `${diff}${untracked}`], ['log', log], ['command', command]
   ];
   let redactions = 0;
   const sanitized = {};
@@ -52,7 +75,7 @@ export async function collectBrief({ root = '.', goal = 'Continue the current ta
     generatedAt: new Date().toISOString(),
     goal: sanitized.goal,
     repository: { branch: sanitized.branch, status: sanitized.status, stat: sanitized.stat },
-    files: statusFiles(sanitized.status),
+    files,
     evidence: { command: sanitized.command, log: logResult.text },
     diff: includeDiff ? diffResult.text : '',
     truncated: diffResult.truncated || logResult.truncated,

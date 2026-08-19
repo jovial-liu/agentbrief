@@ -45,9 +45,10 @@ test('CLI creates a brief from a temporary repository', async () => {
   const output = path.join(root, 'brief.md');
   const log = path.join(root, 'test.log');
   await writeFile(log, 'token=hidden');
-  await run(process.execPath, [path.resolve('bin/agentbrief.mjs'), '--root', root, '--goal', 'Ship it', '--log', log, '--no-diff', '--out', output]);
+  await run(process.execPath, [path.resolve('bin/agentbrief.mjs'), '--root', root, '--goal', 'Ship it', '--log', log, '--out', output]);
   const brief = await readFile(output, 'utf8');
   assert.match(brief, /Ship it/);
   assert.doesNotMatch(brief, /hidden/);
   assert.match(brief, /redacted/);
+  assert.match(brief, /draft/);
 });
